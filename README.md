@@ -40,11 +40,13 @@ Dataset (100K+ URLs)") in the folder and run `python retrain.py`. Restart the ap
 - On 20 hand-chosen URLs (10 legitimate, 10 phishing-style): 20/20 correct.
 - Real sites such as hotstar.com, wikipedia.org and amazon.in are no longer flagged.
 
-## Limitations
-- Only 820 legitimate domains in the dataset, so unknown real sites can be misjudged.
-- Augmented URL paths are synthetic; the test set is small.
-- Looks at URL text only (no page content, domain age or blacklists).
-- The threshold trades false alarms against missed phishing.
+## Future Scope
+- Add a WHOIS domain-age feature, since brand-new domains are a classic phishing sign.
+- Train on a much larger list of real, popular websites to reduce false alarms.
+- Analyse the page content too (login forms, logos, hidden links).
+- Build a browser extension that warns users before they click a link.
+- Deploy the Flask app online so anyone can use it.
+- Add a feedback button and retrain regularly with new phishing URLs.
 
 ## Team
 Team of 4 - MIT-WPU Pune. (Asmita Dalvi,Sradha Saiju,Tanvi Rathod,Advika Bakore)
