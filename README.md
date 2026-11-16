@@ -44,7 +44,7 @@ Dataset (100K+ URLs)") in the folder and run `python retrain.py`. Restart the ap
 ## Results
 - On 20 hand-chosen URLs (10 legitimate, 10 phishing-style): 20/20 correct.
 - Real sites such as hotstar.com, wikipedia.org and amazon.in are no longer flagged.
----
+
 ## Model Analysis
 
 ### 1. Feature Importance Analysis
@@ -59,7 +59,7 @@ The top three features were:
 | url_length | 14.30% |
 | entropy | 12.42% |
 
-The least important feature was `suspicious_words`, with an importance score of 0.53%.
+The least important feature was `suspicious_words`, with an score of 0.53%.
 
 The results are saved in `feature_importance_results.csv`, and the graph is saved as `feature_importance_graph.png`.
 
@@ -81,6 +81,7 @@ The comparison results are saved in `threshold_comparison.csv`.
 ### 3. Conclusion
 
 Feature importance analysis helped us understand which URL features influence the model's predictions. Threshold analysis helped us understand how changing the threshold affects the model's performance.
+
 ## Future Scope
 - Add a WHOIS domain-age feature, since brand-new domains are a classic phishing sign.
 - Train on a much larger list of real, popular websites to reduce false alarms.
