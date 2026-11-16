@@ -65,7 +65,7 @@ The results are saved in `feature_importance_results.csv`, and the graph is save
 
 ### 2. Threshold Analysis
 
-We used `threshold_analysis.py` to compare six thresholds from 0.30 to 0.80.
+We used `threshold_analysis.py` to compare six thresholds from 0.30 to 0.90.
 
 The results at a threshold of 0.60 were:
 
