@@ -6,7 +6,7 @@ df = pd.read_csv("threshold_test_results.csv")
 y_test = df["actual_label"]
 probabilities = df["phishing_probability"]
 
-thresholds = [0.30, 0.40, 0.50, 0.60, 0.70, 0.80]
+thresholds = [0.30,0.40,0.50,0.60,0.70,0.80,0.90]
 
 print("\n===== THRESHOLD ANALYSIS =====")
 results = []
