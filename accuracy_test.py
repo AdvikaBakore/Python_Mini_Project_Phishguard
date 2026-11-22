@@ -1,4 +1,4 @@
-# Tests PhishGuard on 20 URLs we chose ourselves (10 legitimate, 10 phishing-style).
+# Tests PhishGuard on 30 URLs we chose ourselves (15 legitimate, 15 phishing-style).
 # Run:  python accuracy_test.py
 from app import final_risk, is_trusted, THRESHOLD
 
@@ -23,6 +23,17 @@ TESTS = [  # (url, correct answer: 0 = legitimate, 1 = phishing)
     ("http://45.77.12.9/login/verify/account.php", 1),
     ("http://icici-secure-signin.top/bank/confirm", 1),
     ("http://apple-id-locked-verify.com/signin/update", 1),
+    # ---- 10 new URLs ----
+    ("https://www.microsoft.com/en-in", 0),
+    ("https://www.nytimes.com/section/world", 0),
+    ("https://www.bbc.com/news", 0),
+    ("https://www.swiggy.com/restaurants", 0),
+    ("https://docs.python.org/3/tutorial", 0),
+    ("http://netflix-account-suspended.com/login/verify", 1),
+    ("http://secure-sbi-kyc-update.xyz/login?id=9921", 1),
+    ("http://paytm-wallet-verify.top/confirm/account", 1),
+    ("http://123.45.67.89/bank/signin.php", 1),
+    ("http://amazon-prize-winner-claim.info/verify/account", 1),
 ]
 
 correct = 0
