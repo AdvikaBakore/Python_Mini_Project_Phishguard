@@ -1,0 +1,33 @@
+﻿RESULT    RISK  URL
+OK          5%  https://www.google.com/search?q=python
+OK          4%  https://github.com/pallets/flask
+OK          5%  https://www.wikipedia.org
+OK          0%  https://www.amazon.in/gp/cart/view.html
+OK          4%  https://www.flipkart.com/mobiles/pr?sid=tyy
+OK          0%  https://www.youtube.com/watch?v=abc123
+OK          5%  https://www.mitwpu.edu.in/admissions
+OK          5%  https://www.irctc.co.in/nget/train-search
+OK          0%  https://stackoverflow.com/questions/tagged/python
+OK          5%  https://www.linkedin.com/in/someone
+OK        100%  http://paypa1-secure-login.com/account/confirm
+OK        100%  http://192.168.1.1-secure-login.verify-account.com/update
+OK        100%  http://sbi-netbanking-verify.com/login/update-account
+OK        100%  http://amaz0n-account-verify.net/signin?id=84721
+OK        100%  http://secure-login.google-account-confirm.xyz/verify
+OK        100%  http://hdfc-bank-update-kyc.info/login.php?user=1234
+OK        100%  http://netflix-billing-update.com/account/confirm-payment
+OK        100%  http://45.77.12.9/login/verify/account.php
+OK        100%  http://icici-secure-signin.top/bank/confirm
+OK        100%  http://apple-id-locked-verify.com/signin/update
+OK          5%  https://www.microsoft.com/en-in
+OK          0%  https://www.nytimes.com/section/world
+OK          0%  https://www.bbc.com/news
+OK          2%  https://www.swiggy.com/restaurants
+OK          5%  https://docs.python.org/3/tutorial
+OK        100%  http://netflix-account-suspended.com/login/verify
+OK        100%  http://secure-sbi-kyc-update.xyz/login?id=9921
+OK        100%  http://paytm-wallet-verify.top/confirm/account
+OK        100%  http://123.45.67.89/bank/signin.php
+OK        100%  http://amazon-prize-winner-claim.info/verify/account
+
+Accuracy: 30/30 = 100%
