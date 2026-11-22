@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>PhishGuard</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #eef2f7; margin: 0; padding: 40px 16px; }
+    .card { max-width: 700px; margin: 0 auto; background: #fff; padding: 28px; border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+    h1 { margin: 0 0 4px; }
+    p.sub { margin: 0 0 20px; color: #444; }
+    input[type=text] { width: 100%; padding: 12px; font-size: 16px; box-sizing: border-box; }
+    button { width: 100%; margin-top: 12px; padding: 12px; font-size: 16px; color: #fff;
+             background: #1a47d6; border: none; border-radius: 6px; cursor: pointer; }
+    .result { margin-top: 20px; padding: 16px; border-radius: 8px; }
+    .Safe { background: #e6f4ea; }
+    .Suspicious { background: #fff4e0; }
+    .Dangerous { background: #fce8e6; }
+    .bar { height: 14px; background: #ddd; border-radius: 7px; overflow: hidden; margin: 8px 0 14px; }
+    .fill { height: 100%; }
+    .Safe .fill { background: #1e7e34; }
+    .Suspicious .fill { background: #e08a00; }
+    .Dangerous .fill { background: #b3261e; }
+    .tip { font-style: italic; margin-top: 12px; }
+    .hist { margin-top: 24px; font-size: 14px; }
+    .hist h4 { margin: 0 0 6px; }
+    .hist p { margin: 3px 0; color: #444; word-break: break-all; }
+    .note { margin-top: 18px; font-size: 12px; color: #777; }
+    .url { color: #555; word-break: break-all; }
+    .ok { color: #1e7e34; }
+    .warn { color: #b3261e; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>PhishGuard</h1>
+    <p class="sub">Check if a URL is safe before you click</p>
+    <form method="POST">
+      <input type="text" name="url" placeholder="Paste a URL here" required>
+      <button type="submit">Check URL</button>
+    </form>
+
+    {% if result %}
+    <div class="result {{ result.level }}">
+      <h3>
+        {% if result.level == 'Dangerous' %}Dangerous: likely phishing{% elif result.level == 'Suspicious' %}Suspicious: be careful{% else %}Looks safe{% endif %}
+        (risk score: {{ result.risk }}%)
+      </h3>
+      <div class="bar"><div class="fill" style="width: {{ result.risk }}%"></div></div>
+      <p class="url">{{ result.url }}</p>
+      <p><b>Why:</b></p>
+      {% for ok, text in result.signals %}
+        <p class="{{ 'ok' if ok else 'warn' }}">{{ '✓' if ok else '✗' }} {{ text }}</p>
+      {% endfor %}
+      <p class="tip">{{ result.tip }}</p>
+    </div>
+    {% endif %}
+
+    {% if history %}
+    <div class="hist">
+      <h4>Recent checks (this session only, not saved)</h4>
+      {% for url, risk, level in history %}
+        <p>{{ level }} ({{ risk }}%) - {{ url }}</p>
+      {% endfor %}
+    </div>
+    {% endif %}
+    <p class="note">PhishGuard gives a risk score from the URL text only. It can be wrong, so use your own judgement too.</p>
+  </div>
+</body>
+</html>
