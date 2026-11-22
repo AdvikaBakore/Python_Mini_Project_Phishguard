@@ -1,3 +1,4 @@
+import difflib
 import joblib
 import pandas as pd
 from urllib.parse import urlparse
@@ -80,6 +81,68 @@ def build_signals(f):
     return signals
 
 
+# ---------- Extra features ----------
+SHORTENERS = ["bit.ly", "tinyurl.com", "t.co", "goo.gl", "is.gd", "ow.ly",
+              "cutt.ly", "rebrand.ly", "shorturl.at", "tiny.cc"]
+
+# Phishers swap letters for look-alike digits (paypal -> paypa1)
+LOOKALIKE_MAP = str.maketrans("0134578", "oleastb")
+
+
+def get_host(url):
+    host = urlparse(url).netloc.lower().split(":")[0]
+    return host[4:] if host.startswith("www.") else host
+
+
+def is_shortener(url):
+    host = get_host(url)
+    return any(host == d for d in SHORTENERS)
+
+
+def find_lookalike(url):
+    """If the domain is NOT trusted but looks almost like a trusted one
+    (paypa1.com vs paypal.com), return that trusted domain, else None."""
+    if is_trusted(url):
+        return None
+    host = get_host(url)
+    parts = host.split(".")
+    # compare the main name (e.g. "paypa1" in paypa1.com) with trusted names
+    main = parts[-2] if len(parts) >= 2 else host
+    main_fixed = main.translate(LOOKALIKE_MAP)
+    best, best_score = None, 0
+    for d in TRUSTED_DOMAINS:
+        name = d.split(".")[0]
+        if len(name) < 4:
+            continue  # too short to compare fairly (x.com)
+        for candidate in {main, main_fixed}:
+            score = difflib.SequenceMatcher(None, candidate, name).ratio()
+            if score > best_score:
+                best, best_score = d, score
+    # similar (0.8+) but not exactly the same name
+    if best and best_score >= 0.8 and main != best.split(".")[0]:
+        return best
+    return None
+
+
+def risk_level(risk_percent):
+    """Three levels instead of just phishing / safe."""
+    if risk_percent >= THRESHOLD * 100:
+        return "Dangerous"
+    if risk_percent >= 30:
+        return "Suspicious"
+    return "Safe"
+
+
+TIPS = {
+    "Safe": "Looks fine, but still check the address carefully before entering a password.",
+    "Suspicious": "Be careful. Do not enter passwords or card details. Open the official site yourself instead.",
+    "Dangerous": "Do not click or enter any details. If this came in a message, do not reply to it, and report it.",
+}
+
+# Recent checks, kept only in memory while the app runs (nothing saved to a file)
+HISTORY = []
+
+
 @app.route("/", methods=["GET", "POST"])
 def home():
     result = None
@@ -96,13 +159,34 @@ def home():
             signals = build_signals(features)
             if trusted:
                 signals.insert(0, (True, "Domain is on our trusted list"))
+
+            # Extra check 1: look-alike of a trusted site (typosquatting)
+            lookalike = find_lookalike(url)
+            if lookalike:
+                phishing_prob = max(phishing_prob, 0.85)
+                signals.insert(0, (False, "Looks like " + lookalike +
+                                   " but is a different domain (look-alike trick)"))
+
+            # Extra check 2: shortened link hides the real destination
+            short = is_shortener(url)
+            if short:
+                phishing_prob = max(phishing_prob, 0.40)
+                signals.insert(0, (False, "Shortened link: the real destination is hidden"))
+
+            is_phishing = phishing_prob >= THRESHOLD
+            risk = round(phishing_prob * 100)
+            level = risk_level(risk)
             result = {
                 "url": url,
                 "is_phishing": is_phishing,
-                "risk": round(phishing_prob * 100),
+                "risk": risk,
+                "level": level,
+                "tip": TIPS[level],
                 "signals": signals,
             }
-    return render_template("index.html", result=result)
+            HISTORY.insert(0, (url, risk, level))
+            del HISTORY[5:]
+    return render_template("index.html", result=result, history=HISTORY)
 
 
 if __name__ == "__main__":
