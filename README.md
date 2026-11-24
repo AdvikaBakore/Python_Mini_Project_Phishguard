@@ -83,4 +83,107 @@ PhishGuard was tested in two ways.
 
 To run it: `python accuracy_test.py`. The full output is saved in `test_results.txt`.
 
-### 2. Manual
+### 2. Manual test of the new features
+
+We typed links into the web page and checked what it showed.
+
+| URL typed | Expected | Result |
+|---|---|---|
+| [www.hotstar.com/in](http://www.hotstar.com/in) | Safe (trusted list) | Safe, 5% |
+| github.com/pallets/flask | Safe | Safe |
+| paypa1.com | Dangerous, look-alike warning | Dangerous, 85% |
+| g00gle.com | Dangerous, look-alike warning | Dangerous, 85% |
+| amazom.in | Dangerous, look-alike warning | Dangerous, 85% |
+| bit.ly/abc123 | Suspicious, short-link warning | Suspicious, 40% |
+| [http://paypa1-secure-login.com/account/confirm](http://paypa1-secure-login.com/account/confirm) | Dangerous | Dangerous |
+
+### What the testing shows, and what it does not
+
+- The app behaves correctly on these examples.
+- The test set is small. The real websites are mostly well known, and the phishing links are obvious look-alikes, so results on other links may be different.
+- The look-alike check only compares with the sites on our trusted list, so it cannot catch a fake of a site that is not on the list.
+- A short link is marked Suspicious, not Dangerous, because short links are not always bad.
+
+---
+
+## Model Analysis
+
+**Analysis by: Sradha Saiju**
+
+This section explains how the model makes its decisions and how the threshold affects the results.
+
+### 1. Which features does the model rely on most?
+
+`feature_importance.py` ranks the 10 features by how much the Random Forest uses them.
+
+| Feature | Importance |
+|---|---:|
+| suspicious_words | 38.5% |
+| has_https | 32.8% |
+| entropy | 11.5% |
+| special_char_count | 7.0% |
+| url_length | 5.9% |
+| num_dots | 2.2% |
+| num_subdirs | 2.1% |
+| num_params | 0.0% |
+| has_ip | 0.0% |
+| digits_count | 0.0% |
+
+- The model relies mostly on suspicious words and on whether the link uses HTTPS.
+- The three features at 0% are not used by the model. The app still shows an IP warning on the page.
+- The training data has very few real websites, so the model may have learned that "no HTTPS" means phishing. We treat this as a limit.
+
+### 2. How does the threshold change the results?
+
+A risk at or above the threshold is shown as phishing. `threshold_analysis.py` tries thresholds from 0.30 to 0.90 on our 30 test URLs.
+
+| Threshold | Real sites wrongly flagged | Phishing missed | Accuracy |
+|---|---:|---:|---:|
+| 0.30 | 0 | 0 | 100% |
+| 0.40 | 0 | 0 | 100% |
+| 0.50 | 0 | 0 | 100% |
+| 0.60 (we use this) | 0 | 0 | 100% |
+| 0.70 | 0 | 0 | 100% |
+| 0.80 | 0 | 4 | 87% |
+| 0.90 | 0 | 13 | 57% |
+
+- From 0.30 to 0.70 the results are the same on our test, so 0.60 is a safe middle value.
+- Above 0.80 the model starts to miss phishing links.
+- A lower threshold catches more phishing but could wrongly flag real sites on a bigger test.
+
+---
+
+## Responsible use
+
+- PhishGuard gives a risk score to help a person decide. It is not a final judgement, and it can be wrong in both directions.
+- It only reads the link text that the user pastes. The recent checks list stays in memory and is not saved.
+- We report our results honestly, including the limits below.
+
+## SDG mapping
+
+- **SDG 16 (Peace, Justice and Strong Institutions):** helps people avoid online fraud.
+- **SDG 9 (Industry, Innovation and Infrastructure):** a digital safety tool.
+- **SDG 8 (Decent Work and Economic Growth):** fraud causes real money loss for people and small businesses.
+
+## Future scope
+
+- Check how old a website is (new sites are riskier).
+- Train on many more real websites to make it more reliable.
+- Read the page content as well as the link.
+- Make it a browser add-on that warns you automatically.
+- Put it online so anyone can use it.
+
+## Documentation
+
+**Documentation (this README, the project report and the presentations) by: Tanvi Rathod**
+
+## Team
+
+**Team of 4, MIT-WPU Pune.**
+
+| Member | Role |
+|---|---|
+| Advika Bakore | Application code, model training and new features |
+| Asmita Dalvi | Testing |
+| Sradha Saiju | Model analysis |
+| Tanvi Rathod | Documentation and presentations |
